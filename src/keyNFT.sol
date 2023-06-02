@@ -1,7 +1,7 @@
 /// SPDX-License-Identifier: MIT
 pragma solidity ^0.8.13;
 
-import { ERC721 } from "@solmate/tokens/ERC721.sol";
+import { ERC721 } from "@openzeppelin/token/ERC721/ERC721.sol";
 import { Strings } from "@openzeppelin/utils/Strings.sol";
 import { Ownable } from "@openzeppelin/access/Ownable.sol";
 
@@ -17,9 +17,8 @@ contract KeyNFT is ERC721, Ownable {
     string public baseURI;
     uint256 public constant TOTAL_SUPPLY = 1_000;
     uint256 public constant MINT_PRICE = 0.5 ether;
-    uint256 public constant MAX_PER_WALLET = 10;
 
-        constructor(
+    constructor(
         string memory _name,
         string memory _symbol,
         string memory _baseURI
