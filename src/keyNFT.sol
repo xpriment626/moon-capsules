@@ -5,13 +5,12 @@ import { ERC721 } from "@openzeppelin/token/ERC721/ERC721.sol";
 import { ERC721URIStorage } from "@openzeppelin/token/ERC721/extensions/ERC721URIStorage.sol";
 import { Ownable } from "@openzeppelin/access/Ownable.sol";
 
-contract KeyNFT is ERC721, Ownable {
+contract KeyNFT is ERC721 {
+    mapping(uint256 => address) private ownerMapping;
+
     constructor(address _recipient, uint256 _tokenId) ERC721("MyNFT", "NFT") {
         _safeMint(_recipient, _tokenId);
-    }
-
-    function _burn(uint256 tokenId) internal override(ERC721) {
-        super._burn(tokenId);
+        ownerMapping[_tokenId] = _recipient;
     }
 
     function supportsInterface(bytes4 interfaceId)
@@ -21,6 +20,10 @@ contract KeyNFT is ERC721, Ownable {
         returns (bool)
     {
         return super.supportsInterface(interfaceId);
+    }
+
+    function ownerOf(uint256 tokenId) public view override returns (address) {
+        return ownerMapping[tokenId];
     }
 }
 
