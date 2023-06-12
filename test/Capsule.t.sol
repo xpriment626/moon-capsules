@@ -15,9 +15,7 @@ contract CapsuleTest is DSTest {
     event checkAddr(address nftOwner, address capsuleOwner);
 
     function testOwnerSanityTest() public {
-        address payable owner = payable(
-            0xA66D38D132461f69b5aA1958233Ee120f513D451
-        );
+        address payable owner = payable(address(1));
         MCFactory factory = new MCFactory();
         factory.createCapsule(owner);
         MoonCapsule capsule = factory.capsules(owner);
