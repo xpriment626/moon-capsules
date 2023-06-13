@@ -29,5 +29,17 @@ contract MoonCapsule is ERC721 {
         require(sent, "Withdrawal failed");
     }
 
+    function withdrawERC20(
+        address _token,
+        uint256 _amount,
+        uint256 _tokenId
+    ) external {
+        if (msg.sender != ownerOf(_tokenId)) {
+            revert NotOwner({caller: msg.sender, expected: ownerOf(_tokenId)});
+        }
+        IERC20(_token).approve(address(this), _amount);
+        IERC20(_token).transferFrom(address(this), msg.sender, _amount);
+    }
+
     receive() external payable {}
 }
