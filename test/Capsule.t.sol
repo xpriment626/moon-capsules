@@ -171,4 +171,31 @@ contract CapsuleTest is DSTest {
         capsule.withdrawERC20(address(token), 500, 1);
         assertEq(token.balanceOf(alice), 600);
     }
+
+    function testSwapOwnership() public {
+        MCFactory factory = new MCFactory();
+        address payable alice = payable(address(1));
+        address payable bob = payable(address(2));
+        vm.deal(alice, 10 ether);
+
+        factory.createCapsule(alice);
+        MoonCapsule capsule = factory.capsules(alice);
+
+        emit CheckAddr(capsule.ownerOf(1));
+
+        /// Alice funds capsule and transfers to bob
+        vm.startPrank(alice);
+        payable(address(capsule)).transfer(10 ether);
+        capsule.transferFrom(alice, bob, 1);
+        vm.stopPrank();
+
+        assertEq(address(capsule).balance, 10 ether);
+        assertEq(capsule.ownerOf(1), bob);
+
+        /// Bob can access eth deposited by Alice
+        vm.prank(bob);
+        capsule.withdraw(5 ether, 1);
+        assertEq(address(capsule).balance, 5 ether);
+        assertEq(address(bob).balance, 5 ether);
+    }
 }
