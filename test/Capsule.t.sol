@@ -14,6 +14,7 @@ contract CapsuleTest is DSTest {
 
     // event CapsuleCreated(address payable owner);
     event CheckAddr(address nftOwner);
+    event CheckAmount(uint256 amount);
     event EthReceived(address sender, uint256 amount);
 
     function testOwnerSanityTest() public {
@@ -136,5 +137,38 @@ contract CapsuleTest is DSTest {
         payable(address(capsuleBob)).transfer(5 ether);
 
         assertNotEq(address(capsuleAlice).balance, address(capsuleBob).balance);
+    }
+
+    function testERC20DepositAndWithdraw() public {
+        MCFactory factory = new MCFactory();
+        address payable alice = payable(address(1));
+
+        /// Mint token and send to Alice
+        MockERC20 token = new MockERC20();
+        token.mint(address(this), 1000);
+        token.approve(address(this), 1000);
+        assertEq((token.allowance(address(this), address(this))), 1000);
+        token.transferFrom(address(this), alice, 1000);
+        assertEq(token.balanceOf(alice), 1000);
+
+        /// Alice creates capsule and deposits ERC20 tokens
+        vm.startPrank(alice);
+        factory.createCapsule(alice);
+        MoonCapsule capsule = factory.capsules(alice);
+        token.approve(alice, 1000);
+        assertEq((token.allowance(alice, alice)), 1000);
+        token.transferFrom(alice, address(capsule), 1000);
+        vm.stopPrank();
+        assertEq(token.balanceOf(address(capsule)), 1000);
+        assertEq(token.balanceOf(alice), 0);
+
+        /// Alice transfer back to herself
+        vm.prank(alice);
+        capsule.withdrawERC20(address(token), 100, 1);
+        assertEq(token.balanceOf(alice), 100);
+
+        vm.prank(alice);
+        capsule.withdrawERC20(address(token), 500, 1);
+        assertEq(token.balanceOf(alice), 600);
     }
 }
