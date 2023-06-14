@@ -17,7 +17,7 @@ contract CapsuleTest is DSTest {
     event EthReceived(address sender, uint256 amount);
 
     /// Test that owners are correctly assigned
-    function testOwnerSanityTest() public {
+    function test_OwnerSanity() public {
         MCFactory factory = new MCFactory();
         address payable alice = payable(address(1));
         vm.prank(alice);
@@ -28,7 +28,7 @@ contract CapsuleTest is DSTest {
     }
 
     /// Test that multiple owners are correctly assigned
-    function testMultiOwner() public {
+    function test_MultiOwner() public {
         MCFactory factory = new MCFactory();
 
         /// Alice creates a capsule
@@ -49,7 +49,7 @@ contract CapsuleTest is DSTest {
     }
 
     /// Test that ownership updates as expected when capsules are transferred
-    function testSwapableOwnership() public {
+    function test_SwapableOwnership() public {
         MCFactory factory = new MCFactory();
         address payable alice = payable(address(1));
         address payable bob = payable(address(2));

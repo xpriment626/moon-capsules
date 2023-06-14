@@ -17,7 +17,7 @@ contract CapsuleTest is DSTest {
     event CheckAmount(uint256 amount);
     event EthReceived(address sender, uint256 amount);
 
-    function testMultiOwnerFund() public {
+    function test_MultiOwnerFund() public {
         MCFactory factory = new MCFactory();
 
         /// Alice funds a capsule
@@ -46,7 +46,7 @@ contract CapsuleTest is DSTest {
         assertEq(bobBalance, 10 ether);
     }
 
-    function testDepositAndWithdraw() public {
+    function test_DepositAndWithdraw() public {
         MCFactory factory = new MCFactory();
 
         /// Alice funds a capsule
@@ -80,7 +80,7 @@ contract CapsuleTest is DSTest {
         assertEq(aliceReceived, 5 ether);
     }
 
-    function testExpectUniqueBalances() public {
+    function test_ExpectUniqueBalances() public {
         MCFactory factory = new MCFactory();
         address payable alice = payable(address(1));
         address payable bob = payable(address(2));
@@ -109,7 +109,7 @@ contract CapsuleTest is DSTest {
         assertNotEq(address(capsuleAlice).balance, address(capsuleBob).balance);
     }
 
-    function testERC20DepositAndWithdraw() public {
+    function test_ERC20DepositAndWithdraw() public {
         MCFactory factory = new MCFactory();
         address payable alice = payable(address(1));
 
@@ -149,7 +149,7 @@ contract CapsuleTest is DSTest {
         assertEq(token.allowance(alice, alice), 700);
     }
 
-    function testSwapableOwnershipERC20() public {
+    function test_SwapableOwnershipERC20() public {
         MCFactory factory = new MCFactory();
         address payable alice = payable(address(1));
         address payable bob = payable(address(2));
