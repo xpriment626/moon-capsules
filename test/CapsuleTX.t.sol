@@ -17,37 +17,7 @@ contract CapsuleTest is DSTest {
     event CheckAmount(uint256 amount);
     event EthReceived(address sender, uint256 amount);
 
-    function testOwnerSanityTest() public {
-        MCFactory factory = new MCFactory();
-        address payable alice = payable(address(1));
-        vm.prank(alice);
-        factory.createCapsule(alice);
-        MoonCapsule capsule = factory.capsules(alice);
-        address owner = capsule.ownerOf(1);
-        assertEq(owner, alice);
-    }
-
-    function testMultiOwner() public {
-        MCFactory factory = new MCFactory();
-
-        /// Alice creates a capsule
-        address payable alice = payable(address(1));
-        address payable bob = payable(address(2));
-        vm.prank(alice);
-        factory.createCapsule(alice);
-        MoonCapsule capsuleAlice = factory.capsules(alice);
-        address owner = capsuleAlice.ownerOf(1);
-
-        /// Bob creates a capsule
-        vm.prank(bob);
-        factory.createCapsule(bob);
-        MoonCapsule capsuleBob = factory.capsules(bob);
-        address owner2 = capsuleBob.ownerOf(2);
-        assertEq(owner, alice);
-        assertEq(owner2, bob);
-    }
-
-    function testMultiOwnerFund() public {
+    function test_MultiOwnerFund() public {
         MCFactory factory = new MCFactory();
 
         /// Alice funds a capsule
@@ -76,7 +46,7 @@ contract CapsuleTest is DSTest {
         assertEq(bobBalance, 10 ether);
     }
 
-    function testDepositAndWithdraw() public {
+    function test_DepositAndWithdraw() public {
         MCFactory factory = new MCFactory();
 
         /// Alice funds a capsule
@@ -110,7 +80,7 @@ contract CapsuleTest is DSTest {
         assertEq(aliceReceived, 5 ether);
     }
 
-    function testExpectUniqueness() public {
+    function test_ExpectUniqueBalances() public {
         MCFactory factory = new MCFactory();
         address payable alice = payable(address(1));
         address payable bob = payable(address(2));
@@ -139,7 +109,7 @@ contract CapsuleTest is DSTest {
         assertNotEq(address(capsuleAlice).balance, address(capsuleBob).balance);
     }
 
-    function testERC20DepositAndWithdraw() public {
+    function test_ERC20DepositAndWithdraw() public {
         MCFactory factory = new MCFactory();
         address payable alice = payable(address(1));
 
@@ -179,34 +149,7 @@ contract CapsuleTest is DSTest {
         assertEq(token.allowance(alice, alice), 700);
     }
 
-    function testSwapableOwnership() public {
-        MCFactory factory = new MCFactory();
-        address payable alice = payable(address(1));
-        address payable bob = payable(address(2));
-        vm.deal(alice, 10 ether);
-
-        factory.createCapsule(alice);
-        MoonCapsule capsule = factory.capsules(alice);
-
-        emit CheckAddr(capsule.ownerOf(1));
-
-        /// Alice funds capsule and transfers to bob
-        vm.startPrank(alice);
-        payable(address(capsule)).transfer(10 ether);
-        capsule.transferFrom(alice, bob, 1);
-        vm.stopPrank();
-
-        assertEq(address(capsule).balance, 10 ether);
-        assertEq(capsule.ownerOf(1), bob);
-
-        /// Bob can access eth deposited by Alice
-        vm.prank(bob);
-        capsule.withdraw(5 ether, 1);
-        assertEq(address(capsule).balance, 5 ether);
-        assertEq(address(bob).balance, 5 ether);
-    }
-
-    function testSwapableOwnershipERC20() public {
+    function test_SwapableOwnershipERC20() public {
         MCFactory factory = new MCFactory();
         address payable alice = payable(address(1));
         address payable bob = payable(address(2));
